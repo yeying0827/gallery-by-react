@@ -1,0 +1,43 @@
+html,body {
+  width: 100%;
+  height: 100%;
+  background-color: #222;
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+}
+
+/* stage -- start */
+.stage {
+  width: 100%;
+  height: 680px;
+  position: relative;// 方便定位nav
+}
+/* stage -- end */
+
+/* image -- start */
+.img-sec {
+  position: relative;// 方便定位其中的图片
+
+  width: 100%;
+  height: 100%;
+  overflow: hidden;// 图片超出的地方隐藏
+
+  background-color: #ddd;
+}
+/* image -- end */
+
+/* controller -- start */
+.controller-nav {
+  position: absolute;// 绝对定位到舞台的底部
+  left: 0;
+  bottom: 0;
+
+  z-index: 101;// 使能够在图片的上边
+
+  width: 100%;
+  text-align: center;// 让其中的单个控制按钮能够居中显示
+}
+/* controller -- end */
