@@ -18,4 +18,4 @@ yo react-webpack gallery-by-react
 > --项目启动
 ```bash
 npm start
-``
+```
