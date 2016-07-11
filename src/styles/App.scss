@@ -26,6 +26,83 @@ html,body {
   overflow: hidden;// 图片超出的地方隐藏
 
   background-color: #ddd;
+
+  perspective: 1800px;// 跟查看3D效果有关
+
+  // @at-root directive: 
+  // 在最终生成css代码的时候，将其中的内容提到结构的最外层
+  @at-root{
+    // 突出层级关系
+    .img-figure {
+      position: absolute;
+      
+      width: 320px;
+      height: 360px;
+      margin: 0;
+      padding: 40px;
+
+      background-color: #fff;
+
+      box-sizing: border-box; // width的值包含padding的值
+      cursor: pointer;
+      // 默认的情况下，变形的原点位于元素的中心点
+      // 通过transform-origin的属性，让imgFigure的变形原点位于x轴的原点
+      // 默认值是50% 50% 0
+      // 三个值分别表示x轴的原点，y轴的原点，z轴的原点
+      transform-origin: 0 50% 0;
+      transform-style: preserve-3d;// 用于翻转图片
+      // 该属性允许我们定义当一个元素在两种状态间切换的时候有一个什么样的过渡动画
+      // left表示在left值发生变化的时候，有一个过渡动画，过渡的时长是0.6秒
+      // ease-in-out：这里用来规定动画的速度曲线是一个3次的贝塞尔函数，呈现的效果是动画以低速开始和结束
+      // 多个动画修饰通过逗号来分隔
+      transition: transform .6s ease-in-out, left .6s ease-in-out, top .6s ease-in-out;
+
+      &.is-inverse {
+        // transform变换属性中有一个属性translate，用来在2d平面上移动元素
+        // 根据x轴和y轴坐标，重新定位元素位置
+        // 本例：翻转到背面的时候，增加一个translate变换
+        // 只传一个参数的时候，表示x轴上的新坐标位置，320px处
+        transform: translate(320px) rotateY(180deg);
+      }
+    }
+
+    figcaption {
+      text-align: center;
+
+      .img-title {
+        margin: 20px 0 0 0;
+
+        color: #a7a0a2;
+        font-size: 16px;
+      }
+
+      .img-back {
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 100%;
+        padding: 50px 40px;
+        overflow: auto;
+
+        color: #a7a0a2;
+        font-size: 22px;
+        line-height: 1.25;
+        text-align: left;
+
+        background-color: #fff;
+
+        box-sizing: border-box;
+        transform: rotateY(180deg) translateZ(1px);
+        backface-visibility: hidden;
+
+        p {
+          margin: 0;
+        }
+      }
+    }
+  }
 }
 /* image -- end */
 
