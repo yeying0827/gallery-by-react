@@ -1,3 +1,14 @@
+@font-face {
+  font-family: 'icons-turn-arrow';// 引用字体文件
+  src: url('../fonts/icons/turn-arrow.eot') format('embedded-opentype'), url('../fonts/icons/turn-arrow.woff') format('woff'), url('../fonts/icons/turn-arrow.ttf') format('truetype'), url('../fonts/icons/turn-arrow.svg') format('svg');
+    // 声明各种format下对应的字体文件，使用逗号分隔
+    // embedded-opentype: 适配ie
+    // woff: chrome和ff
+    // truetype: chrome、ff、opera、safari、android、ios4.2+
+    // svg: ios4.1
+    // 正确解析：default.js里的loader
+}
+
 html,body {
   width: 100%;
   height: 100%;
@@ -31,6 +42,7 @@ html,body {
 
   // @at-root directive: 
   // 在最终生成css代码的时候，将其中的内容提到结构的最外层
+  // 避免性能问题和移植性问题
   @at-root{
     // 突出层级关系
     .img-figure {
@@ -51,6 +63,8 @@ html,body {
       // 三个值分别表示x轴的原点，y轴的原点，z轴的原点
       transform-origin: 0 50% 0;
       transform-style: preserve-3d;// 用于翻转图片
+      // preserve-3d:子元素相对于父容器有了z轴上的纵深概念
+
       // 该属性允许我们定义当一个元素在两种状态间切换的时候有一个什么样的过渡动画
       // left表示在left值发生变化的时候，有一个过渡动画，过渡的时长是0.6秒
       // ease-in-out：这里用来规定动画的速度曲线是一个3次的贝塞尔函数，呈现的效果是动画以低速开始和结束
@@ -95,6 +109,7 @@ html,body {
 
         box-sizing: border-box;
         transform: rotateY(180deg) translateZ(1px);
+        // translateZ(1px):用于解决safari下的bug，沿z轴正向移1px，从imgFigure中突出出来，这样就能盖住imgFigure上的图片了
         backface-visibility: hidden;
 
         p {
@@ -116,5 +131,51 @@ html,body {
 
   width: 100%;
   text-align: center;// 让其中的单个控制按钮能够居中显示
+
+  @at-root {
+    .controller-unit {
+      display: inline-block;// 既可以有宽高，还可以多个控制元素放在同一行
+      margin: 0 5px;
+      width: 30px;
+      height: 30px;
+
+      text-align: center;
+      vertical-align: middle;
+
+      cursor: pointer;
+      background-color: #aaa;
+      border-radius: 50%;
+
+      // 缩放
+      transform: scale(.5);
+      transition: transform .6s ease-in-out, background-color .3s; // transform包含了大小和翻转，不指定默认用ease：慢速开始，变快，然后慢速结束
+
+      &.is-center {
+        background-color: #888;
+
+        transform: scale(1);
+
+        // 伪元素修饰用两个:
+        // 伪类用一个:，如hover
+        &::after {
+          color: #fff;
+          font-family: 'icons-turn-arrow';
+          font-size: 80%;
+          line-height: 30px;
+
+          content: '\e600';// 指定伪元素的内容，这里用翻转箭头的字体的unicode码来对其进行引用
+
+          -webkit-font-smoothing: antialiased; // 开启chrome字体渲染的灰阶平滑
+          -moz-osx-font-smoothing: grayscale;// 开启ff在mac上的字体渲染的灰阶平滑
+        }
+
+        &.is-inverse {
+          background-color: #555;
+
+          transform: rotateY(180deg);
+        }
+      }
+    }
+  }
 }
 /* controller -- end */

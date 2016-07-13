@@ -81,8 +81,9 @@ class ImgFigure extends React.Component {
 		if(this.props.arrange.rotate) {
 			// 兼容ff/chrome/ie/safari
 			// 声明一个厂商前缀的数组
-			['MozT', 'msT', 'WebkitT', 't'].forEach(function(value){
-				styleObj[value + 'ransform'] = 'rotate('+this.props.arrange.rotate+'deg)';
+			// 样式对象的key应该是样式名的驼峰标识写法
+			['MozTransform', 'msTransform', 'WebkitTransform', 'transform'].forEach(function(value){
+				styleObj[value] = 'rotate('+this.props.arrange.rotate+'deg)';
 			}.bind(this));
 			// bind(this)：将ImgFigure component对象传进forEach中的处理函数，以便可以直接在这个函数里面调用this
 		}
@@ -106,6 +107,37 @@ class ImgFigure extends React.Component {
 					</div>
 				</figcaption>
 			</figure>
+		);
+	}
+}
+
+// 控制组件
+class ControllerUnit extends React.Component {
+	handleClick(e){
+		// 如果点击的是当前正在选中态的按钮，则翻转图片，否则将对应的图片居中
+		if(this.props.arrange.isCenter) {
+			this.props.inverse();
+		} else {
+			this.props.center();
+		}
+
+		e.stopPropagation();
+		e.preventDefault();
+	}
+	render() {
+		var controllerUnitClassName = 'controller-unit';
+
+		// 如果对应的是居中的图片，显示控制按钮的居中态
+		if(this.props.arrange.isCenter) {
+			controllerUnitClassName += ' is-center';
+
+			// 如果同时对应的是翻转图片，显示控制按钮的翻转态
+			if(this.props.arrange.isInverse) {
+				controllerUnitClassName += ' is-inverse';
+			}
+		}
+		return (
+			<span className={controllerUnitClassName} onClick={this.handleClick.bind(this)}></span>
 		);
 	}
 }
@@ -210,7 +242,8 @@ class AppComponent extends React.Component {
 			imgsArrangeTopArr = [],
 			// 上侧图片数值，随机
 			// Math.random() * 2 : [0,2)
-			topImgNum = Math.ceil(Math.random() * 2),// 取一个或者不取
+			// floor: 向下取整/ceil：向上取整
+			topImgNum = Math.floor(Math.random() * 2),// 取一个或者不取
 			// 标记布局在上侧区域的图片，是从数组对象的哪个位置拿出来的，初始化为0
 			topImgSpliceIndex = 0,
 
@@ -230,7 +263,7 @@ class AppComponent extends React.Component {
 			// 2.计算随机数，这个随机数用来从imgsArrangeArr中定位取出应该布局上侧的图片的状态信息
 			// 取值范围 imgsArrangeArr.length - topImgNum , 减topImgNum是因为是从索引位置往后取
 			// 向上取整，避免溢出数组
-			topImgSpliceIndex =  Math.ceil(Math.random() * (imgsArrangeArr.length - topImgNum+1));
+			topImgSpliceIndex =  Math.ceil(Math.random() * (imgsArrangeArr.length - topImgNum));
 			imgsArrangeTopArr = imgsArrangeArr.splice(topImgSpliceIndex, topImgNum);
 
 			// 布局位于上侧的图片
@@ -264,6 +297,10 @@ class AppComponent extends React.Component {
 					isCenter: false
 				};
 			}
+
+			// 开启调试，同时eslint的rule需要开放调试
+			// "no-debugger":0
+			// debugger;
  			
  			// 图片信息塞回去
  			if(imgsArrangeTopArr && imgsArrangeTopArr[0]){
@@ -374,7 +411,9 @@ class AppComponent extends React.Component {
 			// 添加索引ref，方便定位不同的ImgFigure
 			// arrange: 把每一个图片的状态信息传递给了这张图片对应的ImgFigure Component
 			// inverse：具体到每个imgFigure，实际上他拿到的是inverse return的函数
-			imgFigures.push(<ImgFigure key={'imgFigure' + index} data={value} ref={'imgFigure' + index} arrange={this.state.imgsArrangeArr[index]} inverse={this.inverse(index)} center={this.center(index)}/>);
+			imgFigures.push(<ImgFigure key={index} data={value} ref={'imgFigure' + index} arrange={this.state.imgsArrangeArr[index]} inverse={this.inverse(index)} center={this.center(index)}/>);
+
+			controllerUnits.push(<ControllerUnit key={index} arrange={this.state.imgsArrangeArr[index]} inverse={this.inverse(index)} center={this.center(index)}/>);
 		}.bind(this));
 		// bind(this): 把react component对象传递到function中，这样可以直接调用this
 
